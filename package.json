@@ -1,0 +1,7 @@
+{
+  "name": "tou-doux-root",
+  "private": true,
+  "scripts": {
+    "vercel-build": "npm --prefix web ci --no-audit --no-fund && npm --prefix web run build"
+  }
+}

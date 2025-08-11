@@ -19,6 +19,7 @@ export default function TopNav() {
           </Link>
           <nav className="hidden md:flex items-center gap-4">
             <Link href="/" className={linkClass("/")}>Home</Link>
+            <Link href="/roadmap" className={linkClass("/roadmap")}>Roadmap</Link>
             <Link href="/plan" className={linkClass("/plan")}>Plan</Link>
             <Link href="/notes" className={linkClass("/notes")}>Notes</Link>
             <Link href="/settings" className={linkClass("/settings")}>Settings</Link>

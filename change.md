@@ -45,6 +45,16 @@ Key files:
 - `web/src/lib/openrouter.ts` (chat helper)
 - `web/src/components/AIChat.tsx`
 
+2025-08-11 - Roadmap page and components
+- Added dedicated Roadmap page with phase cards and an assumptions toggle.
+- Linked Roadmap in the top navigation.
+
+Key files:
+- `web/src/app/roadmap/page.tsx`
+- `web/src/components/roadmap/RoadmapView.tsx`
+- `web/src/components/roadmap/PhaseCard.tsx`
+- `web/src/lib/placeholderRoadmap.ts`
+
 2025-08-11 - Backend scaffold with Drizzle and API routes
 - Added Drizzle ORM with Neon serverless client and schema for `plans`, `tasks`, and `notes`.
 - Created DB client and initial API routes: health check, plan generate (placeholder), plan create, and fetch plan by id.

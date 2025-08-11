@@ -2,6 +2,6 @@
   "name": "tou-doux-root",
   "private": true,
   "scripts": {
-    "vercel-build": "npm --prefix web ci --no-audit --no-fund && npm --prefix web run build"
+    "vercel-build": "npm --prefix web install --no-audit --no-fund && npm --prefix web run build"
   }
 }

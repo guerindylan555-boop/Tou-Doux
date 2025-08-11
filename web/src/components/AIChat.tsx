@@ -36,8 +36,8 @@ export default function AIChat() {
   }
 
   return (
-    <aside className="rounded-xl border border-foreground/10 p-4 h-[600px] flex flex-col">
-      <h2 className="text-sm font-medium mb-3">AI chat</h2>
+    <aside className="rounded-xl border border-foreground/10 p-6 md:p-8 h-[600px] flex flex-col">
+      <h1 className="text-xl font-semibold mb-3">Describe your goal</h1>
       <div className="flex-1 overflow-auto space-y-2 pr-1">
         {messages.map((m, i) => (
           <div key={i} className={m.role === "assistant" ? "text-foreground" : "text-foreground/80"}>
@@ -50,7 +50,7 @@ export default function AIChat() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about the plan..."
+          placeholder="Describe what you want to achieve. Example: 'Launch a personal finance app with budgeting, bill reminders, and reports by November.'"
           className="h-10 flex-1 rounded-md border border-foreground/15 bg-transparent px-3 text-sm outline-none focus:ring-2 focus:ring-foreground/20"
         />
         <Button onClick={send}>Send</Button>

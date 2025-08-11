@@ -60,3 +60,11 @@ Key files:
 - `web/src/app/api/plan/[id]/route.ts`
 - `web/drizzle.config.ts`
 - `web/.env.example`
+
+2025-08-11 - Simplify home page to chat-only
+- Updated home page to show only the goal description chat box for a clean, focused entry point.
+- Adjusted `AIChat` styling and copy to emphasize describing the goal; widened padding and replaced heading/placeholder.
+
+Key files:
+- `web/src/app/page.tsx`
+- `web/src/components/AIChat.tsx`

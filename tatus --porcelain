@@ -1,0 +1,5 @@
+[33mf47283d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m chore: update project
+ web/src/components/QuickStart.tsx          |  5 [32m++++[m[31m-[m
+ web/src/components/roadmap/RoadmapView.tsx | 11 [32m++++++++++[m[31m-[m
+ web/src/components/ui/spinner.tsx          | 11 [32m+++++++++++[m
+ 3 files changed, 25 insertions(+), 2 deletions(-)

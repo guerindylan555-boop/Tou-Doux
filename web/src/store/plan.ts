@@ -1,6 +1,7 @@
 "use client";
 
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 export type CapacityWindow = {
   day: number; // 0-6, Sun-Sat
@@ -44,32 +45,50 @@ export type PlanState = {
   setRoadmap: (roadmap: PlanState["roadmap"]) => void;
 };
 
-export const usePlanStore = create<PlanState>((set) => ({
-  goal: "",
-  deadline: undefined,
-  desiredTaskCount: 20,
-  windows: [
-    { day: 1, start: "09:00", end: "12:00" },
-    { day: 1, start: "13:00", end: "17:00" },
-    { day: 2, start: "09:00", end: "12:00" },
-    { day: 2, start: "13:00", end: "17:00" },
-    { day: 3, start: "09:00", end: "12:00" },
-    { day: 3, start: "13:00", end: "17:00" },
-    { day: 4, start: "09:00", end: "12:00" },
-    { day: 4, start: "13:00", end: "17:00" },
-    { day: 5, start: "09:00", end: "12:00" },
-    { day: 5, start: "13:00", end: "17:00" },
-  ],
-  timeOff: [],
-  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
-  tasks: [],
-  roadmap: undefined,
-  setGoal: (goal) => set({ goal }),
-  setDeadline: (deadline) => set({ deadline }),
-  setDesiredTaskCount: (desiredTaskCount) => set({ desiredTaskCount }),
-  setWindows: (windows) => set({ windows }),
-  setTimeOff: (timeOff) => set({ timeOff }),
-  setTimezone: (timezone) => set({ timezone }),
-  setTasks: (tasks) => set({ tasks }),
-  setRoadmap: (roadmap) => set({ roadmap }),
-}));
+export const usePlanStore = create<PlanState>()(
+  persist(
+    (set) => ({
+      goal: "",
+      deadline: undefined,
+      desiredTaskCount: 20,
+      windows: [
+        { day: 1, start: "09:00", end: "12:00" },
+        { day: 1, start: "13:00", end: "17:00" },
+        { day: 2, start: "09:00", end: "12:00" },
+        { day: 2, start: "13:00", end: "17:00" },
+        { day: 3, start: "09:00", end: "12:00" },
+        { day: 3, start: "13:00", end: "17:00" },
+        { day: 4, start: "09:00", end: "12:00" },
+        { day: 4, start: "13:00", end: "17:00" },
+        { day: 5, start: "09:00", end: "12:00" },
+        { day: 5, start: "13:00", end: "17:00" },
+      ],
+      timeOff: [],
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+      tasks: [],
+      roadmap: undefined,
+      setGoal: (goal) => set({ goal }),
+      setDeadline: (deadline) => set({ deadline }),
+      setDesiredTaskCount: (desiredTaskCount) => set({ desiredTaskCount }),
+      setWindows: (windows) => set({ windows }),
+      setTimeOff: (timeOff) => set({ timeOff }),
+      setTimezone: (timezone) => set({ timezone }),
+      setTasks: (tasks) => set({ tasks }),
+      setRoadmap: (roadmap) => set({ roadmap }),
+    }),
+    {
+      name: "todoux-plan", // session scoped key
+      storage: createJSONStorage(() => sessionStorage),
+      partialize: (s) => ({
+        goal: s.goal,
+        deadline: s.deadline,
+        desiredTaskCount: s.desiredTaskCount,
+        windows: s.windows,
+        timeOff: s.timeOff,
+        timezone: s.timezone,
+        tasks: s.tasks,
+        roadmap: s.roadmap,
+      }),
+    }
+  )
+);

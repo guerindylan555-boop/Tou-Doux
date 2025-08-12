@@ -66,7 +66,7 @@ export default function QuickStart() {
               };
 
               // Roadmap request
-              fetch("/api/roadmap/generate", {
+              const roadmapPromise = fetch("/api/roadmap/generate", {
                 method: "POST",
                 headers,
                 body: JSON.stringify({ goal, desiredTaskCount: 20 }),
@@ -74,11 +74,12 @@ export default function QuickStart() {
                 .then(async (r) => (r.ok ? r.json() : undefined))
                 .then((rm) => {
                   if (rm?.phases) setRoadmap(rm);
+                  return rm;
                 })
-                .catch(() => {});
+                .catch(() => undefined);
 
               // Tasks request
-              fetch("/api/plan/generate", {
+              const tasksPromise = fetch("/api/plan/generate", {
                 method: "POST",
                 headers,
                 body: JSON.stringify({
@@ -93,16 +94,18 @@ export default function QuickStart() {
                   ],
                 }),
               })
-                .then(async (r) => {
-                  if (!r.ok) throw new Error(await r.text());
-                  return r.json();
+                .then(async (r) => (r.ok ? r.json() : undefined))
+                .catch(() => undefined);
+
+              Promise.all([roadmapPromise, tasksPromise])
+                .then(([rm, data]) => {
+                  if (data?.tasks) setTasks(data.tasks);
+                  if (!rm?.phases) {
+                    // ensure we always have something to show
+                    setRoadmap(undefined);
+                  }
                 })
-                .then((data) => {
-                  setTasks(data.tasks ?? generatePlaceholderPlan(goal, 20));
-                  router.push("/roadmap");
-                })
-                .catch(() => {
-                  setTasks(generatePlaceholderPlan(goal, 20));
+                .finally(() => {
                   router.push("/roadmap");
                 });
             }}

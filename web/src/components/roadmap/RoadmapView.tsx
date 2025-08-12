@@ -3,16 +3,41 @@
 import { useMemo, useState, useEffect } from "react";
 import { generatePlaceholderRoadmap } from "@/lib/placeholderRoadmap";
 import { usePlanStore } from "@/store/plan";
+import { useSettingsStore } from "@/store/settings";
 import PhaseCard from "@/components/roadmap/PhaseCard";
 import Spinner from "@/components/ui/spinner";
 
 export default function RoadmapView() {
-  const { goal, roadmap } = usePlanStore();
+  const { goal, roadmap, setRoadmap } = usePlanStore();
+  const { apiKey } = useSettingsStore();
   const [showAssumptions, setShowAssumptions] = useState(false);
 
   const computed = useMemo(() => roadmap ?? generatePlaceholderRoadmap(goal), [roadmap, goal]);
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
+  useEffect(() => {
+    // If we have a goal but no roadmap (e.g., navigated too early), fetch it now
+    if (hydrated && goal && !roadmap) {
+      const controller = new AbortController();
+      (async () => {
+        try {
+          const resp = await fetch("/api/roadmap/generate", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...(apiKey ? { "x-user-api-key": apiKey } : {}),
+            },
+            body: JSON.stringify({ goal, desiredTaskCount: 20 }),
+            signal: controller.signal,
+          });
+          if (!resp.ok) return;
+          const rm = await resp.json();
+          if (rm?.phases) setRoadmap(rm);
+        } catch {}
+      })();
+      return () => controller.abort();
+    }
+  }, [hydrated, goal, roadmap, apiKey, setRoadmap]);
 
   return (
     <div className="space-y-4">

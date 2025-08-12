@@ -132,21 +132,19 @@ export async function callOpenRouterChat(
 
 // Roadmap
 
-export const roadmapPhaseSchema = z.object({
+export const roadmapStageSchema = z.object({
   index: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]),
   title: z.string(),
-  objectives: z.array(z.string()).min(1),
-  acceptanceCriteria: z.array(z.string()).min(1),
-  risks: z.array(z.string()).min(1),
+  items: z.array(z.string()).length(7),
 });
 
 export const aiRoadmapResponseSchema = z.object({
-  phases: z.array(roadmapPhaseSchema).length(5),
+  stages: z.array(roadmapStageSchema).length(5),
   assumptions: z.string().optional().default(""),
 });
 
 export type AiRoadmapResponse = z.infer<typeof aiRoadmapResponseSchema>;
-export type RoadmapPhase = z.infer<typeof roadmapPhaseSchema>;
+export type RoadmapStage = z.infer<typeof roadmapStageSchema>;
 
 export async function callOpenRouterRoadmap(
   apiKey: string,
@@ -210,8 +208,8 @@ Guidelines:
   }
 
   const result = aiRoadmapResponseSchema.parse(parsed);
-  // Ensure phases sorted by index and cover 1..5
-  const sorted: RoadmapPhase[] = [...result.phases].sort((a, b) => a.index - b.index);
-  result.phases = sorted as AiRoadmapResponse["phases"];
+  // Ensure stages sorted by index and cover 1..5
+  const sorted: RoadmapStage[] = [...result.stages].sort((a, b) => a.index - b.index);
+  result.stages = sorted as AiRoadmapResponse["stages"];
   return result;
 }

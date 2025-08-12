@@ -66,7 +66,7 @@ export default function RoadmapView() {
         </div>
       ) : (
       <div className="grid gap-3">
-        {computed.phases.map((p) => (
+        {computed.stages.map((p) => (
           <PhaseCard key={p.index} phase={p} />
         ))}
       </div>

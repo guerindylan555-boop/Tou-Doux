@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import type { RoadmapPhase } from "@/lib/placeholderRoadmap";
+import type { RoadmapStage } from "@/lib/placeholderRoadmap";
 
-export default function PhaseCard({ phase }: { phase: RoadmapPhase }) {
+export default function PhaseCard({ phase }: { phase: RoadmapStage }) {
   const [open, setOpen] = useState(true);
   return (
     <div className="rounded-xl border border-foreground/10">
@@ -21,31 +21,12 @@ export default function PhaseCard({ phase }: { phase: RoadmapPhase }) {
         <div className="text-xs text-foreground/60">{open ? "Hide" : "Show"}</div>
       </button>
       {open && (
-        <div className="px-4 pb-4 grid gap-4 md:grid-cols-3">
-          <div>
-            <div className="text-xs font-medium mb-2">Objectives</div>
-            <ul className="text-sm list-disc pl-5 space-y-1 text-foreground/80">
-              {phase.objectives.map((t, i) => (
-                <li key={i}>{t}</li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <div className="text-xs font-medium mb-2">Acceptance criteria</div>
-            <ul className="text-sm list-disc pl-5 space-y-1 text-foreground/80">
-              {phase.acceptanceCriteria.map((t, i) => (
-                <li key={i}>{t}</li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <div className="text-xs font-medium mb-2">Risks</div>
-            <ul className="text-sm list-disc pl-5 space-y-1 text-foreground/80">
-              {phase.risks.map((t, i) => (
-                <li key={i}>{t}</li>
-              ))}
-            </ul>
-          </div>
+        <div className="px-4 pb-4">
+          <ul className="text-sm list-disc pl-5 space-y-1 text-foreground/80">
+            {phase.items.map((t, i) => (
+              <li key={i}>{t}</li>
+            ))}
+          </ul>
         </div>
       )}
     </div>

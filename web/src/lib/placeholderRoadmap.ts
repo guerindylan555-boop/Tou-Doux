@@ -1,106 +1,52 @@
-export type RoadmapPhase = {
+export type RoadmapStage = {
   index: 1 | 2 | 3 | 4 | 5;
   title: string;
-  objectives: string[];
-  acceptanceCriteria: string[];
-  risks: string[];
+  items: string[]; // exactly 7 under-stages
 };
 
 export type Roadmap = {
-  phases: RoadmapPhase[];
+  stages: RoadmapStage[];
   assumptions: string;
 };
 
+const TITLES: Record<number, string> = {
+  1: "Stage 01: Concept Definition & Requirements",
+  2: "Stage 02: System Architecture & Planning",
+  3: "Stage 03: Core Feature Implementation",
+  4: "Stage 04: Enhancement & Optimization",
+  5: "Validation, Launch & Sustainability",
+};
+
 export function generatePlaceholderRoadmap(goal: string): Roadmap {
-  const goalShort = (goal || "Your goal").slice(0, 60);
-  const phases: RoadmapPhase[] = [
-    {
-      index: 1,
-      title: "Discover",
-      objectives: [
-        `Clarify scope and constraints for: ${goalShort}`,
-        "Identify stakeholders and success criteria",
-      ],
-      acceptanceCriteria: [
-        "Documented scope and non-goals",
-        "List of measurable success criteria",
-      ],
-      risks: [
-        "Scope creep from unclear requirements",
-        "Hidden constraints affecting feasibility",
-      ],
-    },
-    {
-      index: 2,
-      title: "Plan",
-      objectives: [
-        "Design approach and architecture",
-        "Break work into phases and tasks",
-      ],
-      acceptanceCriteria: [
-        "High-level architecture diagram",
-        "Prioritized task list with estimates",
-      ],
-      risks: [
-        "Over-optimistic estimates",
-        "Blocked by external dependencies",
-      ],
-    },
-    {
-      index: 3,
-      title: "Build",
-      objectives: [
-        "Implement core functionality",
-        "Integrate and iterate with feedback",
-      ],
-      acceptanceCriteria: [
-        "Feature-complete against scope",
-        "Core flows tested end-to-end",
-      ],
-      risks: [
-        "Integration issues",
-        "Underestimated complexity",
-      ],
-    },
-    {
-      index: 4,
-      title: "Validate",
-      objectives: [
-        "Test against acceptance criteria",
-        "Fix defects and polish UX",
-      ],
-      acceptanceCriteria: [
-        "All critical bugs resolved",
-        "Meets performance and accessibility targets",
-      ],
-      risks: [
-        "Quality gaps discovered late",
-        "Timeline pressure reduces test depth",
-      ],
-    },
-    {
-      index: 5,
-      title: "Launch",
-      objectives: [
-        "Finalize docs and rollout plan",
-        "Ship and monitor",
-      ],
-      acceptanceCriteria: [
-        "Release checklist complete",
-        "Telemetry/alerts configured",
-      ],
-      risks: [
-        "Post-launch incidents",
-        "Adoption slower than expected",
-      ],
-    },
-  ];
+  const goalShort = (goal || "Your goal").slice(0, 80);
+  const stages: RoadmapStage[] = [1, 2, 3, 4, 5].map((idx) => ({
+    index: idx as 1 | 2 | 3 | 4 | 5,
+    title: TITLES[idx]!,
+    items: Array.from({ length: 7 }).map((_, i) => placeholderItem(idx, i + 1, goalShort)),
+  }));
 
   const assumptions = [
     "Availability follows your configured working windows.",
-    "Estimates represent focused work hours and exclude meetings.",
-    "Dependencies are linear within phases unless noted.",
+    "Items represent outcomes/milestones; durations are handled in tasks.",
+    "Each stage contains exactly seven under-stages for planning clarity.",
   ].join(" ");
 
-  return { phases, assumptions };
+  return { stages, assumptions };
+}
+
+function placeholderItem(stage: number, n: number, goalShort: string): string {
+  switch (stage) {
+    case 1:
+      return `${n}. Define aspect ${n} of ${goalShort}`;
+    case 2:
+      return `${n}. Plan subsystem ${n} and integration boundaries`;
+    case 3:
+      return `${n}. Implement core feature ${n} with tests`;
+    case 4:
+      return `${n}. Optimize area ${n} (perf, UX, or reliability)`;
+    case 5:
+      return `${n}. Validate & launch step ${n}; add sustainability practice`;
+    default:
+      return `${n}. Item`;
+  }
 }

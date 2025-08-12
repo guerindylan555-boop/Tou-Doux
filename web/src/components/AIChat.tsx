@@ -6,6 +6,7 @@ import { useSettingsStore } from "@/store/settings";
 import { usePlanStore } from "@/store/plan";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/ui/spinner";
+import { useUiStore } from "@/store/ui";
 
 export default function AIChat() {
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([
@@ -16,6 +17,7 @@ export default function AIChat() {
   const { setRoadmap } = usePlanStore();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const { setLoading: setGlobalLoading } = useUiStore();
 
   async function send() {
     if (!input.trim()) return;
@@ -27,6 +29,7 @@ export default function AIChat() {
     const looksLikeGoal = userMsg.content.length >= 100 || /deadline|tasks?|phases?|plan/i.test(userMsg.content);
     try {
       if (looksLikeGoal) {
+        setGlobalLoading(true, "Generating roadmap...");
         const resp = await fetch("/api/roadmap/generate", {
           method: "POST",
           headers: {
@@ -43,6 +46,7 @@ export default function AIChat() {
         } else {
           setMessages((m) => [...m, { role: "assistant", content: "Could not generate roadmap. Please try again." }]);
         }
+        setGlobalLoading(false);
       } else {
         const resp = await fetch("/api/chat", {
           method: "POST",

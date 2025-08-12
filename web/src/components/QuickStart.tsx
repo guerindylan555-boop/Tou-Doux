@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { generatePlaceholderPlan } from "@/lib/placeholderPlanner";
 import { useSettingsStore } from "@/store/settings";
 import Spinner from "@/components/ui/spinner";
+import { useUiStore } from "@/store/ui";
 
 const MIN_GOAL_CHARS = 100;
 
@@ -16,6 +17,7 @@ export default function QuickStart() {
   const { setGoal: setStoreGoal, setDeadline: setStoreDeadline, setTasks, setDesiredTaskCount, setRoadmap } = usePlanStore();
   const { apiKey } = useSettingsStore();
   const router = useRouter();
+  const { setLoading: setGlobalLoading } = useUiStore();
 
   const remaining = useMemo(() => Math.max(0, MIN_GOAL_CHARS - goal.trim().length), [goal]);
   const canGenerate = remaining === 0;
@@ -97,6 +99,7 @@ export default function QuickStart() {
                 .then(async (r) => (r.ok ? r.json() : undefined))
                 .catch(() => undefined);
 
+              setGlobalLoading(true, "Generating roadmap and tasks...");
               Promise.all([roadmapPromise, tasksPromise])
                 .then(([rm, data]) => {
                   if (data?.tasks) setTasks(data.tasks);
@@ -106,6 +109,7 @@ export default function QuickStart() {
                   }
                 })
                 .finally(() => {
+                  setGlobalLoading(false);
                   router.push("/roadmap");
                 });
             }}

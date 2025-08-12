@@ -54,6 +54,18 @@ Key files:
 - Extended store to hold `roadmap`; Quick Start now requests roadmap and tasks, then routes to `/roadmap` and displays the generated content.
 - Uses `x-user-api-key` header from Settings when present.
 
+2025-08-11 - Loading UX and robust routing for roadmap
+- Added global loading overlay; Generate and AI chat now show progress while waiting for AI.
+- Persisted `goal` and `roadmap` to sessionStorage to survive route changes.
+- Quick Start and AI chat wait for roadmap before navigating; Roadmap page auto-fetches if needed.
+
+Key files:
+- `web/src/store/ui.ts`
+- `web/src/app/layout.tsx` (overlay)
+- `web/src/store/plan.ts` (persisted state)
+- `web/src/components/QuickStart.tsx`
+- `web/src/components/AIChat.tsx`
+
 Key files:
 - `web/src/app/roadmap/page.tsx`
 - `web/src/components/roadmap/RoadmapView.tsx`

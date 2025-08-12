@@ -6,6 +6,7 @@ import { usePlanStore } from "@/store/plan";
 import { useRouter } from "next/navigation";
 import { generatePlaceholderPlan } from "@/lib/placeholderPlanner";
 import { useSettingsStore } from "@/store/settings";
+import Spinner from "@/components/ui/spinner";
 
 const MIN_GOAL_CHARS = 100;
 
@@ -18,6 +19,7 @@ export default function QuickStart() {
 
   const remaining = useMemo(() => Math.max(0, MIN_GOAL_CHARS - goal.trim().length), [goal]);
   const canGenerate = remaining === 0;
+  const [loading, setLoading] = useState(false);
 
   return (
     <div className="rounded-xl border border-foreground/10 p-6 md:p-8">
@@ -52,6 +54,7 @@ export default function QuickStart() {
             title={!canGenerate ? `Please add ${remaining} more characters` : "Generate plan"}
             onClick={() => {
               if (!canGenerate) return;
+              setLoading(true);
               setStoreGoal(goal);
               setStoreDeadline(deadline || undefined);
               setDesiredTaskCount(20);
@@ -104,7 +107,7 @@ export default function QuickStart() {
                 });
             }}
           >
-            Generate plan
+            {loading ? <Spinner label="Generating plan..." /> : "Generate plan"}
           </Button>
         </div>
       </div>

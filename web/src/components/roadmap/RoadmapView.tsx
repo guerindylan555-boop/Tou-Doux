@@ -1,15 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { generatePlaceholderRoadmap } from "@/lib/placeholderRoadmap";
 import { usePlanStore } from "@/store/plan";
 import PhaseCard from "@/components/roadmap/PhaseCard";
+import Spinner from "@/components/ui/spinner";
 
 export default function RoadmapView() {
   const { goal, roadmap } = usePlanStore();
   const [showAssumptions, setShowAssumptions] = useState(false);
 
   const computed = useMemo(() => roadmap ?? generatePlaceholderRoadmap(goal), [roadmap, goal]);
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
 
   return (
     <div className="space-y-4">
@@ -32,11 +35,17 @@ export default function RoadmapView() {
         </div>
       )}
 
+      {!hydrated ? (
+        <div className="py-10">
+          <Spinner label="Loading roadmap..." />
+        </div>
+      ) : (
       <div className="grid gap-3">
         {computed.phases.map((p) => (
           <PhaseCard key={p.index} phase={p} />
         ))}
       </div>
+      )}
     </div>
   );
 }

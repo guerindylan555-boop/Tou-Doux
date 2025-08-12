@@ -24,6 +24,16 @@ export type PlanState = {
   timeOff: string[]; // ISO dates
   timezone: string;
   tasks: PlanTask[];
+  roadmap?: {
+    phases: Array<{
+      index: 1 | 2 | 3 | 4 | 5;
+      title: string;
+      objectives: string[];
+      acceptanceCriteria: string[];
+      risks: string[];
+    }>;
+    assumptions: string;
+  };
   setGoal: (goal: string) => void;
   setDeadline: (deadline?: string) => void;
   setDesiredTaskCount: (count: number) => void;
@@ -31,6 +41,7 @@ export type PlanState = {
   setTimeOff: (dates: string[]) => void;
   setTimezone: (tz: string) => void;
   setTasks: (tasks: PlanTask[]) => void;
+  setRoadmap: (roadmap: PlanState["roadmap"]) => void;
 };
 
 export const usePlanStore = create<PlanState>((set) => ({
@@ -52,6 +63,7 @@ export const usePlanStore = create<PlanState>((set) => ({
   timeOff: [],
   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
   tasks: [],
+  roadmap: undefined,
   setGoal: (goal) => set({ goal }),
   setDeadline: (deadline) => set({ deadline }),
   setDesiredTaskCount: (desiredTaskCount) => set({ desiredTaskCount }),
@@ -59,4 +71,5 @@ export const usePlanStore = create<PlanState>((set) => ({
   setTimeOff: (timeOff) => set({ timeOff }),
   setTimezone: (timezone) => set({ timezone }),
   setTasks: (tasks) => set({ tasks }),
+  setRoadmap: (roadmap) => set({ roadmap }),
 }));

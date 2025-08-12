@@ -49,11 +49,20 @@ Key files:
 - Added dedicated Roadmap page with phase cards and an assumptions toggle.
 - Linked Roadmap in the top navigation.
 
+2025-08-11 - Roadmap generation via OpenRouter
+- Added `/api/roadmap/generate` to build a 5‑phase roadmap using OpenRouter (with fallback placeholder).
+- Extended store to hold `roadmap`; Quick Start now requests roadmap and tasks, then routes to `/roadmap` and displays the generated content.
+- Uses `x-user-api-key` header from Settings when present.
+
 Key files:
 - `web/src/app/roadmap/page.tsx`
 - `web/src/components/roadmap/RoadmapView.tsx`
 - `web/src/components/roadmap/PhaseCard.tsx`
 - `web/src/lib/placeholderRoadmap.ts`
+- `web/src/app/api/roadmap/generate/route.ts`
+- `web/src/lib/openrouter.ts` (roadmap helper)
+- `web/src/store/plan.ts`
+- `web/src/components/QuickStart.tsx`
 
 2025-08-11 - Backend scaffold with Drizzle and API routes
 - Added Drizzle ORM with Neon serverless client and schema for `plans`, `tasks`, and `notes`.

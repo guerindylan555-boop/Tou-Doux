@@ -129,3 +129,88 @@ export async function callOpenRouterChat(
   const content: string = json?.choices?.[0]?.message?.content ?? "";
   return { content };
 }
+
+// Roadmap
+import { z } from "zod";
+
+export const roadmapPhaseSchema = z.object({
+  index: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]),
+  title: z.string(),
+  objectives: z.array(z.string()).min(1),
+  acceptanceCriteria: z.array(z.string()).min(1),
+  risks: z.array(z.string()).min(1),
+});
+
+export const aiRoadmapResponseSchema = z.object({
+  phases: z.array(roadmapPhaseSchema).length(5),
+  assumptions: z.string().optional().default(""),
+});
+
+export type AiRoadmapResponse = z.infer<typeof aiRoadmapResponseSchema>;
+
+export async function callOpenRouterRoadmap(
+  apiKey: string,
+  input: { goal: string; desiredTaskCount?: number }
+): Promise<AiRoadmapResponse> {
+  const baseUrl = "https://openrouter.ai/api/v1";
+
+  const system = `You are an expert project planner. Return strict JSON only, matching this schema exactly:
+{
+  "phases": [
+    { "index": 1|2|3|4|5, "title": string, "objectives": string[], "acceptanceCriteria": string[], "risks": string[] },
+    ... exactly 5 items total covering indices 1..5 in order
+  ],
+  "assumptions": string
+}
+Guidelines:
+- Structure the work into exactly five phases: Discover, Plan, Build, Validate, Launch.
+- Provide 2-4 items for objectives/acceptanceCriteria/risks for each phase.
+- Keep language concise and actionable.`;
+
+  const user = {
+    goal: input.goal,
+    desiredTaskCount: input.desiredTaskCount,
+  };
+
+  const resp = await fetch(`${baseUrl}/chat/completions`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+      "X-Title": "Tou doux",
+    },
+    body: JSON.stringify({
+      model: process.env.OPENROUTER_MODEL || "openrouter/auto",
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: JSON.stringify(user) },
+      ],
+      temperature: 0.2,
+    }),
+  });
+
+  if (!resp.ok) {
+    const text = await resp.text();
+    throw new Error(`OpenRouter error: ${resp.status} ${text}`);
+  }
+
+  const json = await resp.json();
+  const content: string = json?.choices?.[0]?.message?.content ?? "";
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(content);
+  } catch {
+    const match = content.match(/\{[\s\S]*\}$/);
+    if (!match) {
+      throw new Error("Failed to parse AI response as JSON");
+    }
+    parsed = JSON.parse(match[0]);
+  }
+
+  const result = aiRoadmapResponseSchema.parse(parsed);
+  // Ensure phases sorted by index and cover 1..5
+  result.phases = [...result.phases].sort((a, b) => a.index - b.index) as any;
+  return result;
+}

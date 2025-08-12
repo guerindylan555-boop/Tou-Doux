@@ -12,7 +12,7 @@ const MIN_GOAL_CHARS = 100;
 export default function QuickStart() {
   const [goal, setGoal] = useState("");
   const [deadline, setDeadline] = useState<string>("");
-  const { setGoal: setStoreGoal, setDeadline: setStoreDeadline, setTasks, setDesiredTaskCount } = usePlanStore();
+  const { setGoal: setStoreGoal, setDeadline: setStoreDeadline, setTasks, setDesiredTaskCount, setRoadmap } = usePlanStore();
   const { apiKey } = useSettingsStore();
   const router = useRouter();
 
@@ -56,12 +56,28 @@ export default function QuickStart() {
               setStoreDeadline(deadline || undefined);
               setDesiredTaskCount(20);
               // Call API to generate plan (uses OpenRouter if key present)
+              // Fire both roadmap and tasks generation; roadmap drives the Roadmap page
+              const headers: Record<string, string> = {
+                "Content-Type": "application/json",
+                ...(apiKey ? { "x-user-api-key": apiKey } : {}),
+              };
+
+              // Roadmap request
+              fetch("/api/roadmap/generate", {
+                method: "POST",
+                headers,
+                body: JSON.stringify({ goal, desiredTaskCount: 20 }),
+              })
+                .then(async (r) => (r.ok ? r.json() : undefined))
+                .then((rm) => {
+                  if (rm?.phases) setRoadmap(rm);
+                })
+                .catch(() => {});
+
+              // Tasks request
               fetch("/api/plan/generate", {
                 method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  ...(apiKey ? { "x-user-api-key": apiKey } : {}),
-                },
+                headers,
                 body: JSON.stringify({
                   goal,
                   desiredTaskCount: 20,
@@ -80,11 +96,11 @@ export default function QuickStart() {
                 })
                 .then((data) => {
                   setTasks(data.tasks ?? generatePlaceholderPlan(goal, 20));
-                  router.push("/plan");
+                  router.push("/roadmap");
                 })
                 .catch(() => {
                   setTasks(generatePlaceholderPlan(goal, 20));
-                  router.push("/plan");
+                  router.push("/roadmap");
                 });
             }}
           >

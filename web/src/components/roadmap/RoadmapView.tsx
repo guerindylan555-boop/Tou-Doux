@@ -6,10 +6,10 @@ import { usePlanStore } from "@/store/plan";
 import PhaseCard from "@/components/roadmap/PhaseCard";
 
 export default function RoadmapView() {
-  const { goal } = usePlanStore();
+  const { goal, roadmap } = usePlanStore();
   const [showAssumptions, setShowAssumptions] = useState(false);
 
-  const roadmap = useMemo(() => generatePlaceholderRoadmap(goal), [goal]);
+  const computed = useMemo(() => roadmap ?? generatePlaceholderRoadmap(goal), [roadmap, goal]);
 
   return (
     <div className="space-y-4">
@@ -28,12 +28,12 @@ export default function RoadmapView() {
 
       {showAssumptions && (
         <div className="rounded-lg border border-foreground/10 p-3 text-sm text-foreground/80">
-          {roadmap.assumptions}
+          {computed.assumptions}
         </div>
       )}
 
       <div className="grid gap-3">
-        {roadmap.phases.map((p) => (
+        {computed.phases.map((p) => (
           <PhaseCard key={p.index} phase={p} />
         ))}
       </div>

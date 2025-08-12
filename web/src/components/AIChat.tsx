@@ -39,7 +39,7 @@ export default function AIChat() {
           body: JSON.stringify({ goal: userMsg.content, desiredTaskCount: 20 }),
         });
         const rm = resp.ok ? await resp.json() : undefined;
-        if (rm?.phases) {
+        if (rm?.stages || rm?.phases) {
           setRoadmap(rm);
           setMessages((m) => [...m, { role: "assistant", content: "Generated a roadmap. Opening the Roadmap page..." }]);
           router.push("/roadmap");

@@ -75,7 +75,9 @@ export default function QuickStart() {
               })
                 .then(async (r) => (r.ok ? r.json() : undefined))
                 .then((rm) => {
-                  if (rm?.phases) setRoadmap(rm);
+                  try {
+                    if (rm?.stages || rm?.phases) setRoadmap(rm);
+                  } catch {}
                   return rm;
                 })
                 .catch(() => undefined);

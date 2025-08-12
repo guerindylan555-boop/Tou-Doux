@@ -60,7 +60,7 @@ Guidelines:
       "X-Title": "Tou doux",
     },
     body: JSON.stringify({
-      model: process.env.OPENROUTER_MODEL || "openrouter/auto",
+      model: "openrouter/gpt-5-mini",
       messages: [
         { role: "system", content: system },
         { role: "user", content: JSON.stringify(user) },
@@ -115,7 +115,7 @@ export async function callOpenRouterChat(
       "X-Title": "Tou doux",
     },
     body: JSON.stringify({
-      model: opts?.model || process.env.OPENROUTER_MODEL || "openrouter/auto",
+      model: "openrouter/gpt-5-mini",
       messages,
       temperature: opts?.temperature ?? 0.3,
     }),
@@ -179,7 +179,7 @@ Guidelines:
       "X-Title": "Tou doux",
     },
     body: JSON.stringify({
-      model: process.env.OPENROUTER_MODEL || "openrouter/auto",
+      model: "openrouter/gpt-5-mini",
       messages: [
         { role: "system", content: system },
         { role: "user", content: JSON.stringify(user) },

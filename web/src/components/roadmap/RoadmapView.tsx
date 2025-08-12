@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { generatePlaceholderRoadmap } from "@/lib/placeholderRoadmap";
+import { normalizeRoadmap } from "@/lib/roadmapNormalize";
 import { usePlanStore } from "@/store/plan";
 import { useSettingsStore } from "@/store/settings";
 import PhaseCard from "@/components/roadmap/PhaseCard";
@@ -12,7 +13,10 @@ export default function RoadmapView() {
   const { apiKey } = useSettingsStore();
   const [showAssumptions, setShowAssumptions] = useState(false);
 
-  const computed = useMemo(() => roadmap ?? generatePlaceholderRoadmap(goal), [roadmap, goal]);
+  const computed = useMemo(() => {
+    const normalized = roadmap ? normalizeRoadmap(roadmap) : undefined;
+    return normalized ?? generatePlaceholderRoadmap(goal);
+  }, [roadmap, goal]);
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
   useEffect(() => {
@@ -32,7 +36,8 @@ export default function RoadmapView() {
           });
           if (!resp.ok) return;
           const rm = await resp.json();
-          if (rm?.phases) setRoadmap(rm);
+          const normalized = normalizeRoadmap(rm);
+          if (normalized) setRoadmap(normalized);
         } catch {}
       })();
       return () => controller.abort();

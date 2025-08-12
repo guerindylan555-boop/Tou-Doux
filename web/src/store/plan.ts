@@ -26,12 +26,10 @@ export type PlanState = {
   timezone: string;
   tasks: PlanTask[];
   roadmap?: {
-    phases: Array<{
+    stages: Array<{
       index: 1 | 2 | 3 | 4 | 5;
       title: string;
-      objectives: string[];
-      acceptanceCriteria: string[];
-      risks: string[];
+      items: string[]; // exactly 7
     }>;
     assumptions: string;
   };

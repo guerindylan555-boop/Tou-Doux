@@ -146,6 +146,7 @@ export const aiRoadmapResponseSchema = z.object({
 });
 
 export type AiRoadmapResponse = z.infer<typeof aiRoadmapResponseSchema>;
+export type RoadmapPhase = z.infer<typeof roadmapPhaseSchema>;
 
 export async function callOpenRouterRoadmap(
   apiKey: string,
@@ -210,6 +211,7 @@ Guidelines:
 
   const result = aiRoadmapResponseSchema.parse(parsed);
   // Ensure phases sorted by index and cover 1..5
-  result.phases = [...result.phases].sort((a, b) => a.index - b.index) as any;
+  const sorted: RoadmapPhase[] = [...result.phases].sort((a, b) => a.index - b.index);
+  result.phases = sorted as AiRoadmapResponse["phases"];
   return result;
 }
